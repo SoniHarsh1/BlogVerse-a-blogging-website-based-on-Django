@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Result{% endblock title %}
+{% block blogactive %}active{% endblock blogactive %} 
+
+{% block body %}
+<div class="container my-3">
+    <h1 class="my-3 mb-4 text-center"> Matching Results : </h1>
+
+    {% if allPosts|length < 1 %}
+    <p>No Matching Articles Found</p>
+    <br>
+    <p>Your search - <b>{{query}}</b> - did not match any documents.</p>
+    <p>Suggestions:
+        <ul>
+       <li>Make sure that all words are spelled correctly.
+        <li>Try different keywords.
+        <li>Try more general keywords.
+        </ul>
+        </p>
+    
+    {% else %}
+    <div class="row mb-2">
+        {% for post in allPosts %}
+        <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative border-1">
+          <div class="col p-4 d-flex flex-column position-static">
+            <h3 class="mb-0">{{post.title|title}}</h3>
+            <strong class="d-inline-block mb-2 text-success">Article by : {{post.author| capfirst}}</strong>
+            <div class="mb-1 text-secondary">{{post.timestamp|date:"D d M Y"}}</div>
+            <p class="card-text mb-auto text-justify">{{post.content|truncatechars:500}}</p>
+            <div class="my-2 mt-3">
+                <a href="/blog/{{post.slug|slugify}}" role="button" class="btn btn-primary">Continue reading</a>
+            </div>
+          </div>
+          </div>
+        </div>
+        {% empty %}
+       <p>No Related Article found</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+{% endblock body %}
