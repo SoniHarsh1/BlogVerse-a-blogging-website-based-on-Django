@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock title %}</title>  
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">BlogVerse</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link {% block homeactive %}{% endblock homeactive %}" aria-current="page" href="/">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% block aboutactive %}{% endblock aboutactive %}" href="/about">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% block blogactive %}{% endblock blogactive %}" href="/blog">Blog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% block contactactive %}{% endblock contactactive %}" href="/contact">Contact Us</a>
+              </li>
+              {% comment %} <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Dropdown
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another action</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link disabled">Disabled</a>
+              </li> {% endcomment %}
+            </ul>
+            <form class="d-flex" method="get" action="/search" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="query" name="query" id="query">
+              <button class="btn btn-outline-success me-2" type="submit">Search</button>
+            </form>
+            
+            {% if user.is_authenticated %}
+          <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Welcome <b>{{request.user}}</b>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/logout">Log Out</a></li>
+              </ul>
+            </li>
+          </ul>
+            {% else %}
+            {% comment %} Trigger to Login Offcanvas {% endcomment %}
+            <button class="btn btn-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#LoginOffcanvas" aria-controls="LoginOffcanvas">Login</button>
+            {% comment %} Trigger to Signup Offcanvas {% endcomment %}
+            <button class="btn btn-success ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#SignupOffcanvas" aria-controls="SignupOffcanvas">Sign Up</button>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
+
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <strong>Message : </strong> {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+    
+
+      
+{% comment %} SignUp Offcanvas {% endcomment %}
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="SignupOffcanvas" aria-labelledby="SignupOffcanvas">
+    <div class="offcanvas-header">
+    <h3 class="offcanvas-title" id="SignupOffcanvasLabel">Sign Up</h3>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="SignupOffcanvas"></button>
+     </div>
+     <div class="offcanvas-body">
+     {% comment %} Sign Up Form {% endcomment %}
+
+     <form action='/signup' method='post'>
+      <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" name = "username" aria-describedby="userHelp" placeholder="Choose a unique username" required>
+      </div>
+      <div class="mb-3">
+        <label for="firstname" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="firstname" name = "firstname" aria-describedby="userHelp" placeholder="First Name" required>
+      </div>
+      <div class="mb-3">
+        <label for="lastname" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="lastname" name = "lastname" aria-describedby="userHelp" placeholder="Last Name" required>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name ="email" placeholder="name@example.com" required>
+        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+      </div>
+      <div class="mb-3">
+        <label for="Password1" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password1" name="password1" placeholder="Choose your password" required>
+      </div>
+      <div class="mb-3">
+        <label for="Password2" class="form-label">Re-Enter Password</label>
+        <input type="password" class="form-control" id="password2" name="password2" placeholder="Enter your password again" required>
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="check" name="check" required>
+        <label class="form-check-label" for="Check">Creating an account means you're okay with our <b> <u>Terms and Conditions</u> </b> and <b><u>Privacy Policy</u></b> </label>
+      </div>
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+
+    </div>
+    </div>
+
+
+    {% comment %} Login Offcanvas {% endcomment %}
+
+    {% comment %} SignUp Offcanvas {% endcomment %}
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="LoginOffcanvas" aria-labelledby="LoginOffcanvas">
+      <div class="offcanvas-header">
+      <h3 class="offcanvas-title" id="LoginOffcanvasLabel">Login Here !</h3>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="LoginOffcanvas"></button>
+       </div>
+       <div class="offcanvas-body">
+       {% comment %} Login Form {% endcomment %}
+  
+       <form method='post' action='/login'>
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" class="form-control" id="loginusername" name = "loginusername" aria-describedby="userHelp" placeholder="Enter your username" required>
+        </div>
+        <div class="mb-3">
+          <label for="Pass1" class="form-label">Password</label>
+          <input type="password" class="form-control" id="loginpass" name="loginpass" placeholder="Enter your password" required>
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="loginCheck">
+          <label class="form-check-label" for="loginCheck"> Remember Me </label>
+        </div>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+  
+  
+      </div>
+      </div>
+
+      {% block body %}{% endblock body %}
+    
+      <div class="container">
+        <footer class="py-3 mt-4">
+          <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Features</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
+            <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
+          </ul>
+          <p class="text-center text-muted">© 2022 Company, Inc</p>
+        </footer>
+      </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+  </body>
+</html>

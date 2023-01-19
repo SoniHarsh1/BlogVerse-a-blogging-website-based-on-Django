@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}BlogVerse - BlogPost{% endblock title %}
+{% block blogactive %}active{% endblock blogactive %}
+{% load humanize %}
+
+{% block body %}
+<div class="row g-5 mx-2 my-2">
+  <div class="col-md-8">
+    <article class="blog-post">
+      <h2 class="blog-post-title mb-1">{{post.title|title}}</h2>
+      <p class="blog-post-meta">{{post.timestamp|date:"D d M Y, g A"}} by <a href="/about"
+          class="text-decoration-none text-success">{{post.author| capfirst}}</a></p>
+
+      <p>{{post.content}}</p>
+
+      {% comment %} <nav class="blog-pagination " aria-label="Pagination">
+        <a class="btn btn-outline-primary rounded-pill" href="#">Older</a>
+        <a class="btn btn-outline-secondary rounded-pill disabled">Newer</a>
+      </nav> {% endcomment %}
+  </div>
+
+  <div class="col-md-4">
+    <div class="position-sticky" style="top: 2rem;">
+      <div class="p-4 mb-3 bg-light rounded">
+        <h4 class="fst-italic">About Author</h4>
+        <p class="mb-0">This section is customized by {{post.author|capfirst}} to tell their visitors a little bit about
+          {{post.author|capfirst}}'s other publication, writings, content, or something else entirely. Totally up to
+          {{post.author|capfirst}}.</p>
+      </div>
+
+
+      {% comment %} Taking Comments {% endcomment %}
+      <div class="p-4 mb-2 container">
+        <h3>Comments <span class="font-italic opacity-75">({{comments.count}})</span></h3>
+        <form action="/blog/postComment" method="post">
+          <div class="mb-3">
+            {% if user.is_authenticated %}
+            <label for="exampleInputEmail1" class="form-label">Post Comment :</label>
+            <input type="text" name="comment" class="form-control" placeholder="Enter comment Here" required>
+          </div>
+          <input type="hidden" name="parentSno" value="">
+          <input type="hidden" name="postSno" value="{{post.sno}}">
+          {% csrf_token %}
+          <button type="submit" value="submit" class="btn btn-primary">Submit</button>
+        </form>
+        {% else %}
+        <span class="font-italic">Please <b>Login</b> to comment on this blog.</span>
+        {% endif %}
+
+        {% comment %} Rendering Comment {% endcomment %}
+        {% if comments|length == 0 %}
+        <div class="fst-italic my-3 opacity-75">Be first to comment on the blog.</div>
+        {% else %}
+        {% for comment in comments %}
+        <div class="my-2 p-1 ps-3 bg-light rounded">
+          <div class="fst-italic"><b> {{comment.user.username}} </b>
+            <span class="mb-0 opacity-75"> {{comment.timestamp|naturaltime}}</span>
+          </div>
+          <p class="mb-0">{{comment.comment}}.</p>
+          <div class="reply mx-auto mt-1">
+            <p>
+              <a class="btn btn-sm btn-dark o-75" role="button" type="button" data-bs-toggle="collapse"
+                data-bs-target="#replybox{{comment.sno}}" aria-expanded="false" aria-controls="replybox{{comment.sno}}">
+                Reply
+              </a>
+            </p>
+            <div class="collapse mb-2" id="replybox{{comment.sno}}">
+              <div class="card card-body">
+                <form action="/blog/postComment" method="post">
+                  <div class="mb-3">
+                    {% if user.is_authenticated %}
+                    <label for="reply" class="form-label">Post a Reply :</label>
+                    <input type="text" name="reply" class="form-control" placeholder="Enter your reply here" required>
+                    <input type="hidden" name="parentSno" value="{{comment.sno}}">
+                  </div>
+                  <input type="hidden" name="postSno" value="{{post.sno}}">
+                  {% csrf_token %}
+                  <button type="submit" value="submit" class="btn btn-primary btn-sm">Submit</button>
+                </form>
+                {% else %}
+                <span class="font-italic">Please <b>Login</b> to reply on this comment.</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock body %}
